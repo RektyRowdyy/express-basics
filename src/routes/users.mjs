@@ -13,10 +13,22 @@ router.get("/api/users",
     .isLength({min: 3, max: 10}).withMessage('length not matched'), 
     (req, res) => {
 
-    const result = validationResult(req);
-    console.log(result);
+    //Sessions
+    console.log(req.sessionID);
+    req.sessionStore.get(req.session.id, (err, sessionData) => {
 
-    res.status(201).send(MockUsers)
+        if(err) {
+            console.log(err);
+            throw err;
+        }
+        console.log(sessionData);
+
+    })
+
+    // const result = validationResult(req);
+    // console.log(result);
+
+    // res.status(201).send(MockUsers)
     });
 
 //ROUTE PARAMS
