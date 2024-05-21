@@ -1,10 +1,12 @@
 import express from 'express';
 import { MockUsers } from './utils/constants.mjs'
 import routes from './routes/index.mjs'
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
+app.use(cookieParser('secret'));
 
 app.use(routes);
 
@@ -43,5 +45,7 @@ app.listen(PORT, () => {
 
 
 app.get("/", (req, res) => {
+    // res.cookie('loggedIn',true,{maxAge: 60000 * 60 * 2}) // {2 hrs}
+    res.cookie('loggedIn',true,{maxAge: 60000 / 2, signed: true}) // {10 secs}
     res.status(201).send({msg: "Hello"});
 });
