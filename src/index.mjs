@@ -3,6 +3,8 @@ import { MockUsers } from './utils/constants.mjs'
 import routes from './routes/index.mjs'
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import passport from 'passport';
+import "./strategies/local-strategies.mjs"
 
 const app = express();
 
@@ -16,8 +18,11 @@ app.use(session({
         maxAge: 60000 * 60
     }
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(routes);
+
 
 //if you don't call the next() method the next middleware / request will not be called!
 // const loggingMiddleware = (req,res,next) => {
@@ -52,7 +57,7 @@ app.listen(PORT, () => {
     console.log(`Running on PORT ${PORT}`);
 })
 
-
+//Working with Sessions
 app.get("/", (req, res) => {
 
     console.log(req.session);
@@ -64,7 +69,6 @@ app.get("/", (req, res) => {
     res.status(201).send({msg: "Hello"});
 });
 
-//Working with Sessions
 app.post('/api/auth', (req, res) => {
     const { body: {username, password} } = req;
 
@@ -110,4 +114,25 @@ app.get('/api/cart', (req, res) => {
     if(!req.session.user) return res.sendStatus(401);
 
     return res.send(req.session.cart ?? []);
+})
+
+//Passport.js and Authentication
+app.post('/api/auth/passport', passport.authenticate("local"), (req, res) => {
+    res.sendStatus(200);
+})
+
+app.get('/api/auth/passport/status', (req, res) => {
+    console.log(`Inside /auth/passport/status endpoint`);
+    console.log(req.session);
+    
+    return req.user ? res.status(200).send(req.user) : res.status(401).send({msg: "NOT AUTHORIZED!"})
+})
+
+app.post('/api/auth/passport/logout', (req, res) => {
+    if(!req.user) return res.sendStatus(401);
+
+    req.logout((err) => {
+        if(err) return res.sendStatus(400);
+        return res.sendStatus(200);
+    })
 })
