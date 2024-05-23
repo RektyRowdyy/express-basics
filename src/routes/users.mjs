@@ -4,6 +4,7 @@ import { MockUsers } from "../utils/constants.mjs";
 import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 import { resolveIndexUserById } from "../middlewares/users.middleware.mjs";
 import { UserSchema } from "../models/user.models.mjs";
+import { hashPassword } from "../utils/helpers.mjs";
 
 const router = Router();
 
@@ -104,7 +105,8 @@ router.post('/api/mongo/users', checkSchema(createUserValidationSchema), async (
 
     if(!result.isEmpty()) return res.status(400).send({errors: result.array()})
 
-    const data = matchedData(req)
+    const data = matchedData(req);
+    data.password = hashPassword(data.password);
     const newUser = new UserSchema(data);
     try {
         const savedUser = await newUser.save();
