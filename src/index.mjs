@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
 import "./strategies/local-strategies.mjs"
 
 const app = express();
@@ -25,7 +26,10 @@ app.use(session({
     resave: false,
     cookie: {
         maxAge: 60000 * 60
-    }
+    },
+    store: MongoStore.create({
+        client: mongoose.connection.getClient()
+    })
 }));
 app.use(passport.initialize());
 app.use(passport.session());

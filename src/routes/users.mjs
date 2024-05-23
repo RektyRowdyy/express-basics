@@ -23,6 +23,7 @@ router.get("/api/users",
             console.log(err);
             throw err;
         }
+        console.log(`Inside Session Store`);
         console.log(sessionData);
 
     })
@@ -30,8 +31,8 @@ router.get("/api/users",
     // const result = validationResult(req);
     // console.log(result);
 
-    // res.status(201).send(MockUsers)
-    });
+    res.status(201).send(MockUsers)
+});
 
 //ROUTE PARAMS
 router.get("/api/users/:id", (req,res) => {
