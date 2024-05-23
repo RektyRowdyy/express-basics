@@ -4,9 +4,18 @@ import routes from './routes/index.mjs'
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
+import mongoose from 'mongoose';
 import "./strategies/local-strategies.mjs"
 
 const app = express();
+
+mongoose.connect('mongodb://localhost/express_tutorial')
+    .then(() => {
+        console.log(`Connected to database!`);
+    })
+    .catch((err) => {
+        console.log(`Error connection to database : ${err}`);
+    })
 
 app.use(express.json());
 app.use(cookieParser('secret'));

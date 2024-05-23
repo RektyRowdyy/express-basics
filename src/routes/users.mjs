@@ -3,6 +3,7 @@ import { query, validationResult, checkSchema, matchedData } from "express-valid
 import { MockUsers } from "../utils/constants.mjs";
 import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 import { resolveIndexUserById } from "../middlewares/users.middleware.mjs";
+import { UserSchema } from "../models/user.models.mjs";
 
 const router = Router();
 
@@ -96,5 +97,22 @@ router.delete('/api/users/:id', resolveIndexUserById, (req,res) => {
     return res.sendStatus(200);
 })
 
+//Working with Mongo and Passport.js
+router.post('/api/mongo/users', checkSchema(createUserValidationSchema), async (req,res) => {
+
+    const result = validationResult(req);
+
+    if(!result.isEmpty()) return res.status(400).send({errors: result.array()})
+
+    const data = matchedData(req)
+    const newUser = new UserSchema(data);
+    try {
+        const savedUser = await newUser.save();
+        return res.status(201).send(newUser);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(401);
+    }
+});
 
 export default router;
