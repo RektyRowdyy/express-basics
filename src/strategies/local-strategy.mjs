@@ -1,6 +1,5 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
-import { MockUsers } from "../utils/constants.mjs";
 import { UserSchema } from "../models/user.models.mjs";
 import { comparePassword } from "../utils/helpers.mjs";
 

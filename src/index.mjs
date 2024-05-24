@@ -6,7 +6,8 @@ import session from 'express-session';
 import passport from 'passport';
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
-import "./strategies/local-strategies.mjs"
+// import "./strategies/local-strategy.mjs"
+import "./strategies/discord-strategy.mjs"
 
 const app = express();
 
@@ -148,4 +149,12 @@ app.post('/api/auth/passport/logout', (req, res) => {
         if(err) return res.sendStatus(400);
         return res.sendStatus(200);
     })
+})
+
+app.get('/api/auth/discord', passport.authenticate("discord"));
+
+app.get('/api/auth/discord/redirect', passport.authenticate("discord"), (req, res) => {
+    console.log(req.session);
+    console.log(req.user);
+    res.sendStatus(200);
 })
